@@ -22,6 +22,7 @@ jobs:
         with:
           version: v1.54
           args: --timeout=10m --config=golangci.yml --issues-exit-code=0
+          working-directory: ./src
 
 
   test:
