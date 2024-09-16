@@ -129,6 +129,15 @@ func (s *BidService) GetBidStatusById(filter request.GetBidStatusById) (string, 
 		return "", consts.BidIsNotExistError
 	}
 
+	exist, err = s.storage.CheckUserBid(filter.Username, filter.BidId)
+	if err != nil {
+		return "", err
+	}
+
+	if !exist {
+		return "", consts.UserHasNoRights
+	}
+
 	res, err := s.storage.GetBidStatusById(filter.BidId)
 	if err != nil {
 		return "", err
@@ -154,6 +163,15 @@ func (s *BidService) UpdateBidStatusById(filter request.UpdateBidStatusById) (re
 
 	if !exist {
 		return response.UpdateBidStatusById{}, consts.BidIsNotExistError
+	}
+
+	exist, err = s.storage.CheckUserBid(filter.Username, filter.BidId)
+	if err != nil {
+		return response.UpdateBidStatusById{}, err
+	}
+
+	if !exist {
+		return response.UpdateBidStatusById{}, consts.UserHasNoRights
 	}
 
 	err = s.storage.UpdateBidStatus(filter.BidId, filter.Status)
@@ -189,6 +207,15 @@ func (s *BidService) UpdateBidParams(
 
 	if !exist {
 		return response.UpdateBidParams{}, consts.BidIsNotExistError
+	}
+
+	exist, err = s.storage.CheckUserBid(filter.Username, filter.BidId)
+	if err != nil {
+		return response.UpdateBidParams{}, err
+	}
+
+	if !exist {
+		return response.UpdateBidParams{}, consts.UserHasNoRights
 	}
 
 	res, err := s.storage.GetBidsById(filter.BidId)
@@ -306,6 +333,15 @@ func (s *BidService) UpdateBidVersionRollback(
 
 	if !exist {
 		return response.UpdateBidVersionRollback{}, consts.BidIsNotExistError
+	}
+
+	exist, err = s.storage.CheckUserBid(filter.Username, filter.BidId)
+	if err != nil {
+		return response.UpdateBidVersionRollback{}, err
+	}
+
+	if !exist {
+		return response.UpdateBidVersionRollback{}, consts.UserHasNoRights
 	}
 
 	res, err := s.storage.GetBidVersionById(filter.BidId, filter.Version)

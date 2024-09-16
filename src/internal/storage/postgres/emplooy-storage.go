@@ -11,6 +11,21 @@ type employeeStorage struct {
 	conn *pgx.Conn
 }
 
+const checkUserBidQuery = `SELECT EXISTS(SELECT 1 FROM bid
+                       JOIN employee ON employee.id = bid.author_id
+                       WHERE username = $1 AND bid.id = $2)`
+
+func (e *employeeStorage) CheckUserBid(username string, bidId string) (bool, error) {
+	var exists bool
+
+	err := e.conn.QueryRow(checkUserBidQuery, username, bidId).Scan(&exists)
+	if err != nil {
+		return exists, err
+	}
+
+	return exists, nil
+}
+
 const checkUserIsExist = `SELECT EXISTS(SELECT 1 FROM employee WHERE username = $1)`
 
 func (e *employeeStorage) CheckUserIsExistByUsername(username string) (bool, error) {

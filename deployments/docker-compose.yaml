@@ -29,6 +29,6 @@ services:
       - api.env
     build:
       context: ../
-      dockerfile: ./cmd/api/Dockerfile
+      dockerfile: ./Dockerfile
     ports:
       - "8080:8080"

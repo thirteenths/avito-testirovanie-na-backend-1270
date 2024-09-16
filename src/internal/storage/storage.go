@@ -16,6 +16,10 @@ type storage struct {
 	Bid      BidStorage
 }
 
+func (s *storage) CheckUserBid(username string, bidId string) (bool, error) {
+	return s.Employee.CheckUserBid(username, bidId)
+}
+
 func (s *storage) CheckVersionTenderIsExist(version int, tenderId string) (bool, error) {
 	return s.Tender.CheckVersionTenderIsExist(version, tenderId)
 }

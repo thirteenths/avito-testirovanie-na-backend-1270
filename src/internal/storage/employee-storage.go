@@ -5,4 +5,5 @@ type EmployeeStorage interface {
 	CheckUserIsExistById(userId string) (bool, error)
 	CheckUserOrganization(username string, organizationId string) (bool, error)
 	CheckUserTender(username string, tenderId string) (bool, error)
+	CheckUserBid(username string, bidId string) (bool, error)
 }

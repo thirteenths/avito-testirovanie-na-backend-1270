@@ -1,7 +1,13 @@
-## Запуск проекта на базу предоставленную avito
+## Запуск проекта app + Postgres + migrator
 
 ```
-cd deployments && docker compose up --build app
+cd deployments && docker compose up --build
+
+```
+## Проверка после запуска
+
+```
+curl localhost:8080/api/ping
 
 ```
 
