@@ -119,7 +119,7 @@ FROM tender
          JOIN version ON tender.id = version.tender_id
          JOIN max_version ON version.tender_id = max_version.tender_id 
 WHERE status='Published'
-ORDER BY name LIMIT $2 OFFSET $3`
+ORDER BY name LIMIT $1 OFFSET $2`
 
 func (s *tenderStorage) GetTendersByFilter(limit, offset int) ([]domain.Tender, error) {
 	var tenders []domain.Tender

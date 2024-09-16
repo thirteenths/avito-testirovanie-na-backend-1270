@@ -41,9 +41,7 @@ func (g *GetTendersFilters) Bind(r *http.Request) (err error) {
 	if values.Has("service_type") {
 		g.ServiceType = strings.Split(values.Get("service_type"), ",")
 		for _, serviceType := range g.ServiceType {
-			if !strings.EqualFold(serviceType, "Construction") &&
-				!strings.EqualFold(serviceType, "Delivery") &&
-				!strings.EqualFold(serviceType, "Manufacture") {
+			if serviceType != "Construction" && serviceType != "Delivery" && serviceType != "Manufacture" {
 				return errors.New("invalid service type")
 			}
 		}
