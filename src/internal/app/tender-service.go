@@ -152,6 +152,10 @@ func (s *TenderService) UpdateTenderStatusById(
 		return response.UpdateTenderStatusById{}, consts.UserHasNoRights
 	}
 
+	if !exist {
+		return response.UpdateTenderStatusById{}, consts.UserHasNoRights
+	}
+
 	err = s.storage.UpdateStatusTenderById(filter.TenderId, filter.Status)
 	if err != nil {
 		return response.UpdateTenderStatusById{}, err

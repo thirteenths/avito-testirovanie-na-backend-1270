@@ -113,7 +113,7 @@ func (h *TenderHandler) GetTendersByUsername(w http.ResponseWriter, r *http.Requ
 	filters := request.NewGetTendersByUsername()
 
 	if err := filters.Bind(r); err != nil {
-		log.Printf("Error decoding request body: %v", err)
+		log.Printf("Error bind request: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
 		http.Error(w, string(b), http.StatusBadRequest)
@@ -123,7 +123,7 @@ func (h *TenderHandler) GetTendersByUsername(w http.ResponseWriter, r *http.Requ
 
 	res, err := h.tender.GetTenderByUsername(*filters)
 	if errors.Is(err, consts.UserIsNotExistError) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error get tender by username: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf(
 			"Пользователя не существует",
 		)))
@@ -134,7 +134,7 @@ func (h *TenderHandler) GetTendersByUsername(w http.ResponseWriter, r *http.Requ
 	}
 
 	if err != nil {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error get tender by username: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Ошибка создания тендера")))
 
 		http.Error(w, string(b), http.StatusInternalServerError)
@@ -156,7 +156,7 @@ func (h *TenderHandler) GetTenderStatusById(w http.ResponseWriter, r *http.Reque
 	filters := request.NewGetTenderStatusById()
 
 	if err := filters.Bind(r); err != nil {
-		log.Printf("Error decoding request body: %v", err)
+		log.Printf("Error bind request: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
 		http.Error(w, string(b), http.StatusBadRequest)
@@ -166,7 +166,7 @@ func (h *TenderHandler) GetTenderStatusById(w http.ResponseWriter, r *http.Reque
 
 	res, err := h.tender.GetTenderStatusById(*filters)
 	if errors.Is(err, consts.UserIsNotExistError) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error get status tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf(
 			"Пользователя не существует",
 		)))
@@ -177,7 +177,7 @@ func (h *TenderHandler) GetTenderStatusById(w http.ResponseWriter, r *http.Reque
 	}
 
 	if errors.Is(err, consts.UserHasNoRights) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error get status tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Пользователь нет прав ")))
 
 		http.Error(w, string(b), http.StatusForbidden)
@@ -186,16 +186,16 @@ func (h *TenderHandler) GetTenderStatusById(w http.ResponseWriter, r *http.Reque
 	}
 
 	if errors.Is(err, consts.TenderIsNotExistError) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error get status tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Тендер не существует")))
 
-		http.Error(w, string(b), http.StatusUnauthorized)
+		http.Error(w, string(b), http.StatusNotFound)
 
 		return
 	}
 
 	if err != nil {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error get status tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Ошибка сервера")))
 
 		http.Error(w, string(b), http.StatusInternalServerError)
@@ -217,7 +217,7 @@ func (h *TenderHandler) UpdateTenderStatusById(w http.ResponseWriter, r *http.Re
 	filters := request.NewUpdateTenderStatusById()
 
 	if err := filters.Bind(r); err != nil {
-		log.Printf("Error decoding request body: %v", err)
+		log.Printf("Error bind request: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
 		http.Error(w, string(b), http.StatusBadRequest)
@@ -227,7 +227,7 @@ func (h *TenderHandler) UpdateTenderStatusById(w http.ResponseWriter, r *http.Re
 
 	res, err := h.tender.UpdateTenderStatusById(*filters)
 	if errors.Is(err, consts.UserIsNotExistError) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update status tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf(
 			"Пользователя не существует",
 		)))
@@ -238,7 +238,7 @@ func (h *TenderHandler) UpdateTenderStatusById(w http.ResponseWriter, r *http.Re
 	}
 
 	if errors.Is(err, consts.UserHasNoRights) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update status tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Пользователь нет прав ")))
 
 		http.Error(w, string(b), http.StatusForbidden)
@@ -247,7 +247,7 @@ func (h *TenderHandler) UpdateTenderStatusById(w http.ResponseWriter, r *http.Re
 	}
 
 	if errors.Is(err, consts.TenderIsNotExistError) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update status tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Тендер не существует")))
 
 		http.Error(w, string(b), http.StatusUnauthorized)
@@ -256,7 +256,7 @@ func (h *TenderHandler) UpdateTenderStatusById(w http.ResponseWriter, r *http.Re
 	}
 
 	if err != nil {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update status tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Ошибка сервера")))
 
 		http.Error(w, string(b), http.StatusInternalServerError)
@@ -278,7 +278,7 @@ func (h *TenderHandler) UpdateTenderParams(w http.ResponseWriter, r *http.Reques
 	filters := request.NewUpdateTenderParamsFilter()
 
 	if err := filters.Bind(r); err != nil {
-		log.Printf("Error decoding request body: %v", err)
+		log.Printf("Error bind request: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
 		http.Error(w, string(b), http.StatusBadRequest)
@@ -299,7 +299,7 @@ func (h *TenderHandler) UpdateTenderParams(w http.ResponseWriter, r *http.Reques
 
 	res, err := h.tender.UpdateTenderParams(*filters, req)
 	if errors.Is(err, consts.UserIsNotExistError) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update param tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf(
 			"Пользователя не существует",
 		)))
@@ -310,7 +310,7 @@ func (h *TenderHandler) UpdateTenderParams(w http.ResponseWriter, r *http.Reques
 	}
 
 	if errors.Is(err, consts.UserHasNoRights) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update param tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Пользователь нет прав ")))
 
 		http.Error(w, string(b), http.StatusForbidden)
@@ -319,17 +319,16 @@ func (h *TenderHandler) UpdateTenderParams(w http.ResponseWriter, r *http.Reques
 	}
 
 	if errors.Is(err, consts.TenderIsNotExistError) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update param tender: %v", err)
+		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Тендер не существует")))
 
-		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Тендер не существует")))
-
-		w.WriteHeader(http.StatusNotFound)
+		http.Error(w, string(b), http.StatusNotFound)
 
 		return
 	}
 
 	if err != nil {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update param tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Ошибка сервера")))
 
 		http.Error(w, string(b), http.StatusInternalServerError)
@@ -351,7 +350,7 @@ func (h *TenderHandler) UpdateTenderVersionRollback(w http.ResponseWriter, r *ht
 	filters := request.NewUpdateTenderVersionRollbackFilter()
 
 	if err := filters.Bind(r); err != nil {
-		log.Printf("Error decoding request body: %v", err)
+		log.Printf("Error bind request: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
 		http.Error(w, string(b), http.StatusBadRequest)
@@ -361,7 +360,7 @@ func (h *TenderHandler) UpdateTenderVersionRollback(w http.ResponseWriter, r *ht
 
 	res, err := h.tender.UpdateTenderVersionRollback(*filters)
 	if errors.Is(err, consts.UserIsNotExistError) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update version tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf(
 			"Пользователя не существует",
 		)))
@@ -372,7 +371,7 @@ func (h *TenderHandler) UpdateTenderVersionRollback(w http.ResponseWriter, r *ht
 	}
 
 	if errors.Is(err, consts.UserHasNoRights) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update version tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Пользователь нет прав ")))
 
 		http.Error(w, string(b), http.StatusForbidden)
@@ -381,27 +380,25 @@ func (h *TenderHandler) UpdateTenderVersionRollback(w http.ResponseWriter, r *ht
 	}
 
 	if errors.Is(err, consts.TenderIsNotExistError) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update version tender: %v", err)
+		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Тендер не существует")))
 
-		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Тендер не существует")))
-
-		w.WriteHeader(http.StatusNotFound)
+		http.Error(w, string(b), http.StatusNotFound)
 
 		return
 	}
 
 	if errors.Is(err, consts.VersionIsNotExistError) {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update version tender: %v", err)
+		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Версии не существует")))
 
-		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Версии не существует")))
-
-		w.WriteHeader(http.StatusNotFound)
+		http.Error(w, string(b), http.StatusNotFound)
 
 		return
 	}
 
 	if err != nil {
-		log.Printf("Error creating tender: %v", err)
+		log.Printf("Error update version tender: %v", err)
 		b, _ := json.Marshal(response.NewError(fmt.Sprintf("Ошибка сервера")))
 
 		http.Error(w, string(b), http.StatusInternalServerError)
