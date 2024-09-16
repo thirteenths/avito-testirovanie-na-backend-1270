@@ -1,0 +1,9 @@
+### GET request to example server
+PATCH http://localhost:8080/api/tenders/0c044dca-4f73-4dd0-b257-1495fa228f11/edit?username=john_doe
+Content-Type: application/json
+
+{
+  "description": "Пупупу тратата"
+}
+
+###

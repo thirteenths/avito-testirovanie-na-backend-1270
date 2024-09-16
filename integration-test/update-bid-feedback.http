@@ -1,0 +1,3 @@
+### GET request to example server
+PUT http://localhost:8080/api/bids/d358f043-8fce-48e1-b78b-ff2d4f9bd734/feedback?username=john_doe&bidFeedback=kek
+###

@@ -1,0 +1,9 @@
+### GET request to example server
+PATCH http://localhost:8080/api/bids/d358f043-8fce-48e1-b78b-ff2d4f9bd734/edit?username=john_doe
+Content-Type: application/json
+
+{
+  "description": "Пупупу тратата"
+}
+
+###

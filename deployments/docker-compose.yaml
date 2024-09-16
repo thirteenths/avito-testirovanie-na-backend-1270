@@ -1,0 +1,34 @@
+services:
+
+  postgres:
+    container_name: st_postgres
+    image: postgres:15.4-alpine
+    env_file:
+      - db.env
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+      - ../migrations/:/migrations/:rw
+    ports:
+      - "5432:5432"
+
+  migrator:
+    container_name: st_migrator
+    depends_on:
+      - postgres
+    env_file:
+      - migrator.env
+    build:
+      context: ../
+      dockerfile: ./migrations/Dockerfile
+
+  api:
+    container_name: st_api
+    depends_on:
+      - postgres
+    env_file:
+      - api.env
+    build:
+      context: ../
+      dockerfile: ./cmd/api/Dockerfile
+    ports:
+      - "3000:3000"

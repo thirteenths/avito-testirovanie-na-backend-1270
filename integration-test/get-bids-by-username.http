@@ -1,0 +1,8 @@
+### GET request to example server
+GET http://localhost:8080/api/bids/my
+
+###
+GET http://localhost:8080/api/bids/my?username=user1
+
+###
+GET http://localhost:8080/api/bids/my?username=john_doe

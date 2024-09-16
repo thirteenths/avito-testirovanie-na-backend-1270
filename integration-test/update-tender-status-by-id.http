@@ -1,0 +1,11 @@
+### GET request to example server
+PUT http://localhost:8080/api/tenders/f1117318-3de8-417d-9ec8-72b2da7a8b6d/status
+
+###
+PUT http://localhost:8080/api/tenders/f1117318-3de8-417d-9ec8-72b2da7a8b6d/status?username=1
+
+###
+PUT http://localhost:8080/api/tenders/f1117318-3de8-417d-9ec8-72b2da7a8b6d/status?username=user_01
+
+###
+PUT http://localhost:8080/api/tenders/0c044dca-4f73-4dd0-b257-1495fa228f11/status?username=jdoe&status=Published

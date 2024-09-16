@@ -1,0 +1,11 @@
+### Send POST request with json body
+POST https://cnrprod1725744525-team-79206-33144.avito2024.codenrock.com/api/tenders/new
+Content-Type: application/json
+
+{
+  "name": "Доставка товары Казань - Москва",
+  "description": "Нужно доставить оборудовоние для олимпиады по робототехники",
+  "serviceType": "Construction",
+  "organizationId": "550e8400-e29b-41d4-a716-446655440020",
+  "creatorUsername": "user1"
+}

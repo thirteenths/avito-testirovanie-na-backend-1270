@@ -1,0 +1,12 @@
+### GET request to example server
+GET http://localhost:8080/api/bids/d358f043-8fce-48e1-b78b-ff2d4f9bd734/submit_decision
+
+###
+GET http://localhost:8080/api/tenders/f1117318-3de8-417d-9ec8-72b2da7a8b6d/status?username=1
+
+###
+GET http://localhost:8080/api/tenders/f1117318-3de8-417d-9ec8-72b2da7a8b6d/status?username=jdoe
+
+###
+GET http://localhost:8080/api/tenders/0c044dca-4f73-4dd0-b257-1495fa228f11/status?username=jdoe
+###

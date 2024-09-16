@@ -1,0 +1,14 @@
+### GET request to example server
+GET http://localhost:8080/api/tenders
+
+### GET request to example server
+GET http://localhost:8080/api/tenders?limit=1&offset=0
+
+###
+GET http://localhost:8080/api/tenders?service_type=Construction
+
+###
+GET http://localhost:8080/api/tenders?service_type=Manufacture,Construction
+
+###
+GET http://localhost:8080/api/tenders?service_type=2

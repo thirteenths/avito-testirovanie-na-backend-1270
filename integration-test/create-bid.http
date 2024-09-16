@@ -1,0 +1,11 @@
+###
+POST http://localhost:8080/api/bids/new
+Content-Type: application/json
+
+{
+  "name": "string",
+  "description": "string",
+  "tenderId": "35ec168d-9690-4776-a07d-9f64982f416b",
+  "authorType": "User",
+  "authorId": "eef47898-ad93-4c2d-9b93-e2ea083125ac"
+}
