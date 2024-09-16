@@ -25,12 +25,14 @@ func NewBidHandler(bid app.BidService) *BidHandler {
 
 func (h *BidHandler) CreateBid(w http.ResponseWriter, r *http.Request) {
 	var req request.CreateBid
+
 	w.Header().Set("Content-Type", "application/json")
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		log.Printf("Error decoding request body: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
+
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -40,7 +42,8 @@ func (h *BidHandler) CreateBid(w http.ResponseWriter, r *http.Request) {
 	if errors.Is(err, consts.UserIsNotExistError) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователя не существует")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователя не существует")))
+
 		w.WriteHeader(http.StatusUnauthorized)
 
 		return
@@ -49,7 +52,8 @@ func (h *BidHandler) CreateBid(w http.ResponseWriter, r *http.Request) {
 	if errors.Is(err, consts.UserHasNoRights) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователь нет прав ")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователь нет прав ")))
+
 		w.WriteHeader(http.StatusForbidden)
 
 		return
@@ -58,7 +62,8 @@ func (h *BidHandler) CreateBid(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка создания тендера")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка создания тендера")))
+
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -66,7 +71,9 @@ func (h *BidHandler) CreateBid(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		log.Printf("Error encoding response: %v", err)
+
 		w.WriteHeader(http.StatusBadRequest)
+
 		return
 	}
 
@@ -75,11 +82,12 @@ func (h *BidHandler) CreateBid(w http.ResponseWriter, r *http.Request) {
 
 func (h *BidHandler) GetBidsByUsername(w http.ResponseWriter, r *http.Request) {
 	filters := request.NewGetBidsByUsernameFilter()
+
 	w.Header().Set("Content-Type", "application/json")
 
-	if filters.Bind(r) != nil {
+	if err := filters.Bind(r); err != nil {
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -89,14 +97,17 @@ func (h *BidHandler) GetBidsByUsername(w http.ResponseWriter, r *http.Request) {
 	if errors.Is(err, consts.UserIsNotExistError) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователя %s не существует", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"Пользователя %s не существует", filters.Username)))
+
 		w.WriteHeader(http.StatusUnauthorized)
 
 		return
 	}
 
 	if err != nil {
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -104,6 +115,7 @@ func (h *BidHandler) GetBidsByUsername(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		log.Printf("Error encoding response: %v", err)
+
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -114,11 +126,12 @@ func (h *BidHandler) GetBidsByUsername(w http.ResponseWriter, r *http.Request) {
 
 func (h *BidHandler) GetBidsByTenderId(w http.ResponseWriter, r *http.Request) {
 	filters := request.NewGetBidsByTenderIDFilter()
+
 	w.Header().Set("Content-Type", "application/json")
 
-	if filters.Bind(r) != nil {
+	if err := filters.Bind(r); err != nil {
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -128,14 +141,17 @@ func (h *BidHandler) GetBidsByTenderId(w http.ResponseWriter, r *http.Request) {
 	if errors.Is(err, consts.UserIsNotExistError) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователя %s не существует", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"Пользователя %s не существует", filters.Username)))
+
 		w.WriteHeader(http.StatusUnauthorized)
 
 		return
 	}
 
 	if err != nil {
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -143,6 +159,7 @@ func (h *BidHandler) GetBidsByTenderId(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		log.Printf("Error encoding response: %v", err)
+
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -153,11 +170,12 @@ func (h *BidHandler) GetBidsByTenderId(w http.ResponseWriter, r *http.Request) {
 
 func (h *BidHandler) GetBidsStatusByTenderId(w http.ResponseWriter, r *http.Request) {
 	filters := request.NewGetBidStatusById()
+
 	w.Header().Set("Content-Type", "application/json")
 
-	if filters.Bind(r) != nil {
+	if err := filters.Bind(r); err != nil {
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -167,7 +185,9 @@ func (h *BidHandler) GetBidsStatusByTenderId(w http.ResponseWriter, r *http.Requ
 	if errors.Is(err, consts.UserIsNotExistError) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователя %s не существует", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"Пользователя %s не существует", filters.Username)))
+
 		w.WriteHeader(http.StatusUnauthorized)
 
 		return
@@ -176,14 +196,17 @@ func (h *BidHandler) GetBidsStatusByTenderId(w http.ResponseWriter, r *http.Requ
 	if errors.Is(err, consts.UserHasNoRights) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("У пользователя %s нет прав", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"У пользователя %s нет прав", filters.Username)))
+
 		w.WriteHeader(http.StatusForbidden)
 
 		return
 	}
 
 	if err != nil {
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -191,6 +214,7 @@ func (h *BidHandler) GetBidsStatusByTenderId(w http.ResponseWriter, r *http.Requ
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		log.Printf("Error encoding response: %v", err)
+
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -201,11 +225,12 @@ func (h *BidHandler) GetBidsStatusByTenderId(w http.ResponseWriter, r *http.Requ
 
 func (h *BidHandler) UpdateBidStatusByTenderId(w http.ResponseWriter, r *http.Request) {
 	filters := request.NewUpdateBidStatusById()
+
 	w.Header().Set("Content-Type", "application/json")
 
-	if filters.Bind(r) != nil {
+	if err := filters.Bind(r); err != nil {
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -215,7 +240,9 @@ func (h *BidHandler) UpdateBidStatusByTenderId(w http.ResponseWriter, r *http.Re
 	if errors.Is(err, consts.UserIsNotExistError) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователя %s не существует", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"Пользователя %s не существует", filters.Username)))
+
 		w.WriteHeader(http.StatusUnauthorized)
 
 		return
@@ -224,14 +251,17 @@ func (h *BidHandler) UpdateBidStatusByTenderId(w http.ResponseWriter, r *http.Re
 	if errors.Is(err, consts.UserHasNoRights) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("У пользователя %s нет прав", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"У пользователя %s нет прав", filters.Username)))
+
 		w.WriteHeader(http.StatusForbidden)
 
 		return
 	}
 
 	if err != nil {
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -239,6 +269,7 @@ func (h *BidHandler) UpdateBidStatusByTenderId(w http.ResponseWriter, r *http.Re
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		log.Printf("Error encoding response: %v", err)
+
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -249,11 +280,12 @@ func (h *BidHandler) UpdateBidStatusByTenderId(w http.ResponseWriter, r *http.Re
 
 func (h *BidHandler) UpdateBidParamsByTenderId(w http.ResponseWriter, r *http.Request) {
 	filters := request.NewUpdateBidParamsFilter()
+
 	w.Header().Set("Content-Type", "application/json")
 
-	if filters.Bind(r) != nil {
+	if err := filters.Bind(r); err != nil {
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -264,7 +296,8 @@ func (h *BidHandler) UpdateBidParamsByTenderId(w http.ResponseWriter, r *http.Re
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		log.Printf("Error decoding request body: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
+
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -274,7 +307,9 @@ func (h *BidHandler) UpdateBidParamsByTenderId(w http.ResponseWriter, r *http.Re
 	if errors.Is(err, consts.UserIsNotExistError) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователя %s не существует", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"Пользователя %s не существует", filters.Username)))
+
 		w.WriteHeader(http.StatusUnauthorized)
 
 		return
@@ -283,14 +318,17 @@ func (h *BidHandler) UpdateBidParamsByTenderId(w http.ResponseWriter, r *http.Re
 	if errors.Is(err, consts.UserHasNoRights) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("У пользователя %s нет прав", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"У пользователя %s нет прав", filters.Username)))
+
 		w.WriteHeader(http.StatusForbidden)
 
 		return
 	}
 
 	if err != nil {
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -298,6 +336,7 @@ func (h *BidHandler) UpdateBidParamsByTenderId(w http.ResponseWriter, r *http.Re
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		log.Printf("Error encoding response: %v", err)
+
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -308,11 +347,13 @@ func (h *BidHandler) UpdateBidParamsByTenderId(w http.ResponseWriter, r *http.Re
 
 func (h *BidHandler) UpdateBidDecisionByTenderId(w http.ResponseWriter, r *http.Request) {
 	filters := request.NewUpdateBidDecisionFilter()
+
 	w.Header().Set("Content-Type", "application/json")
 
-	if filters.Bind(r) != nil {
+	if err := filters.Bind(r); err != nil {
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"Ошибка запроса")))
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -322,7 +363,9 @@ func (h *BidHandler) UpdateBidDecisionByTenderId(w http.ResponseWriter, r *http.
 	if errors.Is(err, consts.UserIsNotExistError) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователя %s не существует", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"Пользователя %s не существует", filters.Username)))
+
 		w.WriteHeader(http.StatusUnauthorized)
 
 		return
@@ -331,14 +374,17 @@ func (h *BidHandler) UpdateBidDecisionByTenderId(w http.ResponseWriter, r *http.
 	if errors.Is(err, consts.UserHasNoRights) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("У пользователя %s нет прав", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"У пользователя %s нет прав", filters.Username)))
+
 		w.WriteHeader(http.StatusForbidden)
 
 		return
 	}
 
 	if err != nil {
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -346,6 +392,7 @@ func (h *BidHandler) UpdateBidDecisionByTenderId(w http.ResponseWriter, r *http.
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		log.Printf("Error encoding response: %v", err)
+
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -356,11 +403,12 @@ func (h *BidHandler) UpdateBidDecisionByTenderId(w http.ResponseWriter, r *http.
 
 func (h *BidHandler) UpdateBidFeedBackById(w http.ResponseWriter, r *http.Request) {
 	filters := request.NewUpdateBidFeedbackById()
+
 	w.Header().Set("Content-Type", "application/json")
 
-	if filters.Bind(r) != nil {
+	if err := filters.Bind(r); err != nil {
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -370,7 +418,9 @@ func (h *BidHandler) UpdateBidFeedBackById(w http.ResponseWriter, r *http.Reques
 	if errors.Is(err, consts.UserIsNotExistError) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователя %s не существует", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"Пользователя %s не существует", filters.Username)))
+
 		w.WriteHeader(http.StatusUnauthorized)
 
 		return
@@ -379,14 +429,17 @@ func (h *BidHandler) UpdateBidFeedBackById(w http.ResponseWriter, r *http.Reques
 	if errors.Is(err, consts.UserHasNoRights) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("У пользователя %s нет прав", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"У пользователя %s нет прав", filters.Username)))
+
 		w.WriteHeader(http.StatusForbidden)
 
 		return
 	}
 
 	if err != nil {
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -394,6 +447,7 @@ func (h *BidHandler) UpdateBidFeedBackById(w http.ResponseWriter, r *http.Reques
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		log.Printf("Error encoding response: %v", err)
+
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -404,11 +458,12 @@ func (h *BidHandler) UpdateBidFeedBackById(w http.ResponseWriter, r *http.Reques
 
 func (h *BidHandler) UpdateBidVersionRollback(w http.ResponseWriter, r *http.Request) {
 	filters := request.NewUpdateBidVersionRollback()
+
 	w.Header().Set("Content-Type", "application/json")
 
-	if filters.Bind(r) != nil {
+	if err := filters.Bind(r); err != nil {
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка запроса")))
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -418,7 +473,9 @@ func (h *BidHandler) UpdateBidVersionRollback(w http.ResponseWriter, r *http.Req
 	if errors.Is(err, consts.UserIsNotExistError) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Пользователя %s не существует", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"Пользователя %s не существует", filters.Username)))
+
 		w.WriteHeader(http.StatusUnauthorized)
 
 		return
@@ -427,14 +484,17 @@ func (h *BidHandler) UpdateBidVersionRollback(w http.ResponseWriter, r *http.Req
 	if errors.Is(err, consts.UserHasNoRights) {
 		log.Printf("Error creating tender: %v", err)
 
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("У пользователя %s нет прав", filters.Username)))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf(
+			"У пользователя %s нет прав", filters.Username)))
+
 		w.WriteHeader(http.StatusForbidden)
 
 		return
 	}
 
 	if err != nil {
-		json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+		_ = json.NewEncoder(w).Encode(response.NewError(fmt.Sprintf("Ошибка сервера")))
+
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -442,6 +502,7 @@ func (h *BidHandler) UpdateBidVersionRollback(w http.ResponseWriter, r *http.Req
 
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		log.Printf("Error encoding response: %v", err)
+
 		w.WriteHeader(http.StatusBadRequest)
 
 		return

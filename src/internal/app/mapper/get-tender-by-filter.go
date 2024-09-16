@@ -6,7 +6,8 @@ import (
 )
 
 func MakeGetTenderByFilter(dom []domain.Tender) *response.GetTendersByFilter {
-	var tenders []response.Tender
+	tenders := make([]response.Tender, 0)
+
 	for _, t := range dom {
 		tender := response.Tender{
 			Id:          t.Id,
@@ -17,7 +18,7 @@ func MakeGetTenderByFilter(dom []domain.Tender) *response.GetTendersByFilter {
 			Verstion:    t.Version,
 			CreatedAt:   t.CreatedAt.String(),
 		}
-		
+
 		tenders = append(tenders, tender)
 	}
 

@@ -1,10 +1,10 @@
 package postgres
 
 import (
+	"git.codenrock.com/avito-testirovanie-na-backend-1270/cnrprod1725744525-team-79206/zadanie-6105/internal/storage"
+
 	"github.com/jackc/pgx"
 	"github.com/pkg/errors"
-
-	"git.codenrock.com/avito-testirovanie-na-backend-1270/cnrprod1725744525-team-79206/zadanie-6105/internal/storage"
 )
 
 type employeeStorage struct {
@@ -15,6 +15,7 @@ const checkUserIsExist = `SELECT EXISTS(SELECT 1 FROM employee WHERE username = 
 
 func (e *employeeStorage) CheckUserIsExistByUsername(username string) (bool, error) {
 	var exists bool
+
 	err := e.conn.QueryRow(checkUserIsExist, username).Scan(&exists)
 	if err != nil {
 		return exists, err
@@ -23,10 +24,12 @@ func (e *employeeStorage) CheckUserIsExistByUsername(username string) (bool, err
 	return exists, nil
 }
 
-const checkUserOrganizationQuery = `SELECT EXISTS(SELECT 1 FROM organization_responsible JOIN public.employee E ON E.id = organization_responsible.user_id WHERE username = $1 AND organization_id = $2)`
+const checkUserOrganizationQuery = `SELECT EXISTS(SELECT 1 FROM organization_responsible 
+    JOIN public.employee E ON E.id = organization_responsible.user_id WHERE username = $1 AND organization_id = $2)`
 
 func (e *employeeStorage) CheckUserOrganization(username string, organizationId string) (bool, error) {
 	var exists bool
+
 	err := e.conn.QueryRow(checkUserOrganizationQuery, username, organizationId).Scan(&exists)
 	if err != nil {
 		return exists, err
@@ -42,6 +45,7 @@ const checkUserTenderQuery = `SELECT EXISTS(SELECT 1 FROM organization_responsib
 
 func (e *employeeStorage) CheckUserTender(username string, tenderId string) (bool, error) {
 	var exists bool
+
 	err := e.conn.QueryRow(checkUserTenderQuery, username, tenderId).Scan(&exists)
 	if err != nil {
 		return exists, err
@@ -54,6 +58,7 @@ const checkUserIsExistById = `SELECT EXISTS(SELECT 1 FROM employee WHERE id = $1
 
 func (e *employeeStorage) CheckUserIsExistById(userId string) (bool, error) {
 	var exists bool
+
 	err := e.conn.QueryRow(checkUserIsExistById, userId).Scan(&exists)
 	if err != nil {
 		return exists, err
@@ -67,6 +72,7 @@ func NewEmployeeStorage(url string) (storage.EmployeeStorage, error) {
 	if err != nil {
 		return nil, errors.WithMessage(err, "failed to parse connection string")
 	}
+
 	conn, err := pgx.Connect(conf)
 	if err != nil {
 		return nil, errors.WithMessage(err, "failed to connect to database")

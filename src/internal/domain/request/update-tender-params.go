@@ -7,9 +7,9 @@ import (
 )
 
 type UpdateTenderParams struct {
-	Name        string `json:"name"`        // "name": "string",
-	Description string `json:"description"` // "description": "string",
-	ServiceType string `json:"serviceType"` // "serviceType": "Construction"
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	ServiceType string `json:"serviceType"`
 }
 
 type UpdateTenderParamsFilter struct {

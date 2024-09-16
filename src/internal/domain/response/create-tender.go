@@ -1,11 +1,11 @@
 package response
 
 type CreateTender struct {
-	Id          string `json:"id"`          // "id": "550e8400-e29b-41d4-a716-446655440000",
-	Name        string `json:"name"`        // "name": "Доставка товары Казань - Москва",
-	Description string `json:"description"` // "description": "Нужно доставить оборудовоние для олимпиады по робототехники",
-	Status      string `json:"status"`      // "status": "Created",
-	ServiceType string `json:"serviceType"` // "serviceType": "Delivery",
-	Version     int    `json:"version"`     // "verstion": 1,
-	CreatedAt   string `json:"createdAt"`   // "createdAt": "2006-01-02T15:04:05Z07:00"
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+	ServiceType string `json:"serviceType"`
+	Version     int    `json:"version"`
+	CreatedAt   string `json:"createdAt"`
 }

@@ -16,6 +16,7 @@ const checkBidIsExistQuery = `SELECT EXISTS (SELECT * FROM bid WHERE id = $1)`
 
 func (b bidStorage) CheckBidIsExist(bidId string) (bool, error) {
 	var exists bool
+
 	err := b.conn.QueryRow(checkBidIsExistQuery, bidId).Scan(&exists)
 	if err != nil {
 		return false, err
@@ -24,12 +25,15 @@ func (b bidStorage) CheckBidIsExist(bidId string) (bool, error) {
 	return exists, nil
 }
 
-const createBidVersionQuery = `INSERT INTO bid_version (name, description, number, bid_id) VALUES ($1, $2, $3, $4) RETURNING id, number`
+const createBidVersionQuery = `INSERT INTO bid_version (name, description, number, bid_id) 
+VALUES ($1, $2, $3, $4) RETURNING id, number`
 
-const createBidQuery = `INSERT INTO bid (tender_id, author_type, author_id) VALUES ($1, $2, $3) RETURNING id, created_at`
+const createBidQuery = `INSERT INTO bid (tender_id, author_type, author_id) 
+VALUES ($1, $2, $3) RETURNING id, created_at`
 
 func (b bidStorage) CreateBid(bid domain.Bid) (domain.Bid, error) {
 	tx, err := b.conn.Begin()
+
 	if err != nil {
 		return domain.Bid{}, errors.Wrap(err, "could not begin transaction")
 	}
@@ -53,12 +57,6 @@ func (b bidStorage) CreateBid(bid domain.Bid) (domain.Bid, error) {
 	return bid, nil
 }
 
-// const getBidsByFilterQuery = `SELECT bid.id, bid_version.id, status, tender_id, author_type, author_id, bid.created_at, name, description, number FROM bid
-//    JOIN bid_version ON bid.id = bid_version.bid_id
-//    JOIN employee ON bid.author_id = employee.id
-//         WHERE username = $1
-//         ORDER BY public.bid_version.name LIMIT $2 OFFSET $3`
-
 const getBidsByFilterQuery = `WITH max_version AS (
     SELECT bid_id, MAX(number) AS max_number
     FROM bid_version
@@ -74,14 +72,17 @@ ORDER BY public.bid_version.name LIMIT $2 OFFSET $3`
 
 func (b bidStorage) GetBidsByFilter(limit, offset int, username string) ([]domain.Bid, error) {
 	var bids []domain.Bid
+
 	rows, err := b.conn.Query(getBidsByFilterQuery, username, limit, offset)
 	if err != nil {
 		return bids, errors.Wrap(err, "could not query get bids by filter")
 	}
 
 	defer rows.Close()
+
 	for rows.Next() {
 		var bid domain.Bid
+
 		err = rows.Scan(
 			&bid.ID,
 			&bid.VersionId,
@@ -103,11 +104,6 @@ func (b bidStorage) GetBidsByFilter(limit, offset int, username string) ([]domai
 
 	return bids, nil
 }
-
-// const getBidsByTenderIdByFilter = `SELECT bid.id, version_id, status, tender_id, author_type, author_id, bid.created_at, name, description, version.version FROM bid
-//    JOIN version ON bid.version_id = version.id
-//        WHERE tender_id = $1
-//        ORDER BY public.version.name LIMIT $2 OFFSET $3`
 
 const getBidsByTenderIdByFilter = `WITH max_version AS (
     SELECT bid_id, MAX(number) AS max_number
@@ -122,16 +118,24 @@ FROM bid
 WHERE tender_id = $1
 ORDER BY public.bid_version.name LIMIT $2 OFFSET $3`
 
-func (b bidStorage) GetBidsByTenderIdByFilter(limit, offset int, username string, tenderId string) ([]domain.Bid, error) {
+func (b bidStorage) GetBidsByTenderIdByFilter(
+	limit,
+	offset int,
+	username string,
+	tenderId string,
+) ([]domain.Bid, error) {
 	var bids []domain.Bid
+
 	rows, err := b.conn.Query(getBidsByTenderIdByFilter, tenderId, limit, offset)
 	if err != nil {
 		return bids, errors.Wrap(err, "could not query get bids by filter")
 	}
 
 	defer rows.Close()
+
 	for rows.Next() {
 		var bid domain.Bid
+
 		err = rows.Scan(
 			&bid.ID,
 			&bid.VersionId,
@@ -154,11 +158,14 @@ func (b bidStorage) GetBidsByTenderIdByFilter(limit, offset int, username string
 	return bids, nil
 }
 
-const getBidByIdQuery = `SELECT bid.id, bid_version.id, status, tender_id, author_type, author_id, created_at, name, description, number
-FROM bid JOIN bid_version ON bid.id = bid_version.bid_id WHERE bid.id = $1 AND number=(SELECT MAX(number) FROM bid_version WHERE bid_id = $1)`
+const getBidByIdQuery = `SELECT bid.id, bid_version.id, status, tender_id, author_type, 
+       author_id, created_at, name, description, number
+FROM bid JOIN bid_version ON bid.id = bid_version.bid_id 
+WHERE bid.id = $1 AND number=(SELECT MAX(number) FROM bid_version WHERE bid_id = $1)`
 
 func (b bidStorage) GetBidsById(bidId string) (domain.Bid, error) {
 	var bid domain.Bid
+
 	err := b.conn.QueryRow(getBidByIdQuery, bidId).Scan(
 		&bid.ID,
 		&bid.VersionId,
@@ -182,6 +189,7 @@ const getBidStatusByIdQuery = `SELECT status FROM bid WHERE id = $1`
 
 func (b bidStorage) GetBidStatusById(bidId string) (string, error) {
 	var status string
+
 	err := b.conn.QueryRow(getBidStatusByIdQuery, bidId).Scan(&status)
 	if err != nil {
 		return "", errors.Wrap(err, "could not query get bid status")
@@ -201,8 +209,6 @@ func (b bidStorage) UpdateBidStatus(bidId string, status string) error {
 	return nil
 }
 
-// const updateBidParamsById = `UPDATE bid SET version_id = $1 WHERE id = $2`
-
 func (b bidStorage) UpdateBidById(bidId string, bid domain.Bid) error {
 	tx, err := b.conn.Begin()
 	if err != nil {
@@ -211,15 +217,16 @@ func (b bidStorage) UpdateBidById(bidId string, bid domain.Bid) error {
 
 	defer tx.Rollback()
 
-	err = tx.QueryRow(createBidVersionQuery, bid.Name, bid.Description, bid.Version, bid.ID).Scan(&bid.VersionId, &bid.Version)
+	err = tx.QueryRow(
+		createBidVersionQuery,
+		bid.Name,
+		bid.Description,
+		bid.Version,
+		bid.ID,
+	).Scan(&bid.VersionId, &bid.Version)
 	if err != nil {
 		return errors.Wrap(err, "could not insert bid version")
 	}
-
-	// _, err = tx.Exec(updateBidParamsById, bid.VersionId, bidId)
-	// if err != nil {
-	//	return errors.Wrap(err, "could not update bid params")
-	// }
 
 	err = tx.Commit()
 	if err != nil {
@@ -255,6 +262,7 @@ const getBidVersionByIdQuery = `SELECT id, name, description, version.version FR
 
 func (b bidStorage) GetBidVersionById(bidId string, version int) (domain.Bid, error) {
 	var bid domain.Bid
+
 	err := b.conn.QueryRow(getBidVersionByIdQuery, bidId, version).Scan(
 		&bid.VersionId,
 		&bid.Name,
@@ -272,6 +280,7 @@ const checkOrganizationIsExistQuery = `SELECT EXISTS (SELECT * FROM organization
 
 func (b bidStorage) CheckOrganizationIsExist(organizationId string) (bool, error) {
 	var exists bool
+
 	err := b.conn.QueryRow(checkOrganizationIsExistQuery, organizationId).Scan(&exists)
 	if err != nil {
 		return false, errors.Wrap(err, "could not check organization existence")
@@ -285,6 +294,7 @@ func NewBidStorage(url string) (storage.BidStorage, error) {
 	if err != nil {
 		return nil, errors.WithMessage(err, "failed to parse connection string")
 	}
+
 	conn, err := pgx.Connect(conf)
 	if err != nil {
 		return nil, errors.WithMessage(err, "failed to connect to database")

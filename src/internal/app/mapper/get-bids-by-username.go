@@ -6,7 +6,8 @@ import (
 )
 
 func MakeGetBidsByUsername(dom []domain.Bid) *response.GetBidsByUsername {
-	var bids []response.Bid
+	bids := make([]response.Bid, 0)
+
 	for _, b := range dom {
 		var bid = response.Bid{
 			ID:         b.ID,
@@ -20,6 +21,7 @@ func MakeGetBidsByUsername(dom []domain.Bid) *response.GetBidsByUsername {
 
 		bids = append(bids, bid)
 	}
+
 	return &response.GetBidsByUsername{
 		Bids: bids,
 	}

@@ -46,19 +46,23 @@ func (s *TenderService) CreateTender(req request.CreateTender) (res response.Cre
 
 func (s *TenderService) GetTenderByFilter(filter request.GetTendersFilters) (response.GetTendersByFilter, error) {
 	var tenders []domain.Tender
+
 	var err error
 
-	if len(filter.ServiceType) == 1 {
+	switch len(filter.ServiceType) {
+	case 1:
 		tenders, err = s.storage.GetTendersByOneServiceType(filter.Limit, filter.Offset, filter.ServiceType)
 		if err != nil {
 			return response.GetTendersByFilter{}, err
 		}
-	} else if len(filter.ServiceType) == 2 {
+
+	case 2:
 		tenders, err = s.storage.GetTendersByTwoServiceType(filter.Limit, filter.Offset, filter.ServiceType)
 		if err != nil {
 			return response.GetTendersByFilter{}, err
 		}
-	} else {
+
+	default:
 		tenders, err = s.storage.GetTendersByFilter(filter.Limit, filter.Offset)
 		if err != nil {
 			return response.GetTendersByFilter{}, err
@@ -122,7 +126,9 @@ func (s *TenderService) GetTenderStatusById(filter request.GetTenderStatusById) 
 	return res, nil
 }
 
-func (s *TenderService) UpdateTenderStatusById(filter request.UpdateTenderStatusById) (response.UpdateTenderStatusById, error) {
+func (s *TenderService) UpdateTenderStatusById(
+	filter request.UpdateTenderStatusById,
+) (response.UpdateTenderStatusById, error) {
 	exist, err := s.storage.CheckUserIsExistByUsername(filter.Username)
 	if err != nil {
 		return response.UpdateTenderStatusById{}, err
@@ -159,7 +165,10 @@ func (s *TenderService) UpdateTenderStatusById(filter request.UpdateTenderStatus
 	return *mapper.MakeUpdateTenderStatusByID(res), nil
 }
 
-func (s *TenderService) UpdateTenderParams(filter request.UpdateTenderParamsFilter, req request.UpdateTenderParams) (response.UpdateTenderParams, error) {
+func (s *TenderService) UpdateTenderParams(
+	filter request.UpdateTenderParamsFilter,
+	req request.UpdateTenderParams,
+) (response.UpdateTenderParams, error) {
 	exist, err := s.storage.CheckUserIsExistByUsername(filter.Username)
 	if err != nil {
 		return response.UpdateTenderParams{}, err
@@ -192,8 +201,6 @@ func (s *TenderService) UpdateTenderParams(filter request.UpdateTenderParamsFilt
 		return response.UpdateTenderParams{}, err
 	}
 
-	// todo не делать updaye если запрос пустой
-
 	if req.Name != "" {
 		res.Name = req.Name
 	}
@@ -221,7 +228,9 @@ func (s *TenderService) UpdateTenderParams(filter request.UpdateTenderParamsFilt
 	return *mapper.MakeUpdateTenderParamsByID(res), nil
 }
 
-func (s *TenderService) UpdateTenderVersionRollback(filter request.UpdateTenderVersionRollbackFilter) (response.UpdateTenderVersionRollback, error) {
+func (s *TenderService) UpdateTenderVersionRollback(
+	filter request.UpdateTenderVersionRollbackFilter,
+) (response.UpdateTenderVersionRollback, error) {
 	exist, err := s.storage.CheckUserIsExistByUsername(filter.Username)
 	if err != nil {
 		return response.UpdateTenderVersionRollback{}, err

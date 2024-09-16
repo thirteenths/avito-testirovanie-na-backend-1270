@@ -20,6 +20,7 @@ func NewBidService(storage storage.Storage) *BidService {
 
 func (s *BidService) CreateBid(req request.CreateBid) (response.CreateBid, error) {
 	var exist bool
+
 	var err error
 
 	if req.AuthorType == "User" {
@@ -168,7 +169,10 @@ func (s *BidService) UpdateBidStatusById(filter request.UpdateBidStatusById) (re
 	return *mapper.MakeUpdateBidStatusByID(res), nil
 }
 
-func (s *BidService) UpdateBidParams(filter request.UpdateBidParamsFilter, req request.UpdateBidParams) (response.UpdateBidParams, error) {
+func (s *BidService) UpdateBidParams(
+	filter request.UpdateBidParamsFilter,
+	req request.UpdateBidParams,
+) (response.UpdateBidParams, error) {
 	exist, err := s.storage.CheckUserIsExistByUsername(filter.Username)
 	if err != nil {
 		return response.UpdateBidParams{}, err
@@ -215,7 +219,9 @@ func (s *BidService) UpdateBidParams(filter request.UpdateBidParamsFilter, req r
 	return *mapper.MakeUpdateBidParams(res), nil
 }
 
-func (s *BidService) UpdateBidDecision(filter request.UpdateBidDecisionFilter) (response.UpdateBidDecision, error) {
+func (s *BidService) UpdateBidDecision(
+	filter request.UpdateBidDecisionFilter,
+) (response.UpdateBidDecision, error) {
 	exist, err := s.storage.CheckUserIsExistByUsername(filter.Username)
 	if err != nil {
 		return response.UpdateBidDecision{}, err
@@ -247,7 +253,9 @@ func (s *BidService) UpdateBidDecision(filter request.UpdateBidDecisionFilter) (
 	return *mapper.MakeUpdateBidDecision(res), nil
 }
 
-func (s *BidService) UpdateBidFeedbackById(filter request.UpdateBidFeedbackById) (response.UpdateBidFeedbackById, error) {
+func (s *BidService) UpdateBidFeedbackById(
+	filter request.UpdateBidFeedbackById,
+) (response.UpdateBidFeedbackById, error) {
 	exist, err := s.storage.CheckUserIsExistByUsername(filter.Username)
 	if err != nil {
 		return response.UpdateBidFeedbackById{}, err
@@ -279,7 +287,9 @@ func (s *BidService) UpdateBidFeedbackById(filter request.UpdateBidFeedbackById)
 	return *mapper.MakeUpdateBidFeedbackById(res), nil
 }
 
-func (s *BidService) UpdateBidVersionRollback(filter request.UpdateBidVersionRollback) (response.UpdateBidVersionRollback, error) {
+func (s *BidService) UpdateBidVersionRollback(
+	filter request.UpdateBidVersionRollback,
+) (response.UpdateBidVersionRollback, error) {
 	exist, err := s.storage.CheckUserIsExistByUsername(filter.Username)
 	if err != nil {
 		return response.UpdateBidVersionRollback{}, err

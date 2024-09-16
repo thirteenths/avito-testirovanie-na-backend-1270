@@ -6,7 +6,8 @@ import (
 )
 
 func MakeGetBidsByTenderId(dom []domain.Bid) *response.GetBidsByTenderId {
-	var bids []response.Bid
+	bids := make([]response.Bid, 0)
+
 	for _, b := range dom {
 		var bid = response.Bid{
 			ID:         b.ID,
@@ -20,6 +21,7 @@ func MakeGetBidsByTenderId(dom []domain.Bid) *response.GetBidsByTenderId {
 
 		bids = append(bids, bid)
 	}
+
 	return &response.GetBidsByTenderId{
 		Bids: bids,
 	}
